@@ -114,10 +114,10 @@ def add_bias_column(X):
 # Step 10 - make_shuffled_indices
 def make_shuffled_indices(n_samples, seed):
     # TODO: Create a reproducibly shuffled permutation of row indices.
-    rng = np.random.default_rng(seed)
+    np.random.seed(seed)
 
     indices = np.arange(n_samples)
-    rng.shuffle(indices)
+    np.random.shuffle(indices)
 
     return indices
 
@@ -267,9 +267,7 @@ def make_train_val_test(X, y, train_ratio, val_ratio, seed):
     indices = make_shuffled_indices(len(X), seed)
 
     train_idx, val_idx, test_idx = partition_indices(
-        indices,
-        train_ratio,
-        val_ratio
+        indices, train_ratio, val_ratio
     )
 
     X_train, y_train = subset_xy(X, y, train_idx)
