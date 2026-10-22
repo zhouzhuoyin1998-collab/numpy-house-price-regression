@@ -145,8 +145,15 @@ def subset_xy(X, y, indices):
 
     return X_sub, y_sub
 
-# Step 13 - ols_fit (not yet solved)
-# TODO: implement
+# Step 13 - ols_fit
+def ols_fit(X, y):
+    # TODO: return the ordinary-least-squares weight vector for a linear model.
+    X = np.array(X, dtype=float)
+    y = np.array(y, dtype=float)
+
+    theta = np.linalg.lstsq(X, y, rcond=None)[0]
+
+    return theta
 
 # Step 14 - ols_predict (not yet solved)
 # TODO: implement
