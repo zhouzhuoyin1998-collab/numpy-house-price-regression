@@ -124,16 +124,14 @@ def make_shuffled_indices(n_samples, seed):
 # Step 11 - partition_indices
 def partition_indices(indices, train_ratio, val_ratio):
     # TODO: Split a shuffled index array into train, validation, and test index arrays.
-    indices = np.array(indices)
-
     n = len(indices)
 
-    train_end = int(n * train_ratio)
-    val_end = train_end + int(n * val_ratio)
+    n_train = int(n * train_ratio)
+    n_val = int(n * val_ratio)
 
-    train_idx = indices[:train_end]
-    val_idx = indices[train_end:val_end]
-    test_idx = indices[val_end:]
+    train_idx = indices[:n_train]
+    val_idx = indices[n_train:n_train + n_val]
+    test_idx = indices[n_train + n_val:]
 
     return train_idx, val_idx, test_idx
 
@@ -263,8 +261,29 @@ def assemble_feature_matrix(X_num, ratio_num_idx, ratio_den_idx, cat_labels=None
 
     return X
 
-# Step 21 - make_train_val_test (not yet solved)
-# TODO: implement
+# Step 21 - make_train_val_test
+def make_train_val_test(X, y, train_ratio, val_ratio, seed):
+    # TODO: Shuffle and materialize train/validation/test matrices from X and y...
+    indices = make_shuffled_indices(len(X), seed)
+
+    train_idx, val_idx, test_idx = partition_indices(
+        indices,
+        train_ratio,
+        val_ratio
+    )
+
+    X_train, y_train = subset_xy(X, y, train_idx)
+    X_val, y_val = subset_xy(X, y, val_idx)
+    X_test, y_test = subset_xy(X, y, test_idx)
+
+    return {
+        "X_train": X_train,
+        "y_train": y_train,
+        "X_val": X_val,
+        "y_val": y_val,
+        "X_test": X_test,
+        "y_test": y_test
+    }
 
 # Step 22 - standardize_and_add_bias (not yet solved)
 # TODO: implement
