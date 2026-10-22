@@ -324,6 +324,69 @@ def evaluate_predictions(y_true, y_pred):
         "residual_summary": residual_summary(y_true, y_pred)
     }
 
-# Step 24 - house_price_pipeline (not yet solved)
-# TODO: implement
+# Step 24 - house_price_pipeline
+def house_price_pipeline(X, y, ratio_num_idx, ratio_den_idx, cat_labels=None, train_ratio=0.7, val_ratio=0.15, seed=42, iqr_k=1.5):
+    # TODO: Run full clean->featurize->split->standardize->OLS->evaluate pipeline...
+    # 1. Clean numeric features
+    X_clean = prepare_cleaned_features(
+        X,
+        iqr_k=iqr_k
+    )
+
+    # 2. Feature engineering
+    X_features = assemble_feature_matrix(
+        X_clean,
+        ratio_num_idx,
+        ratio_den_idx,
+        cat_labels
+    )
+
+    # 3. Split
+    splits = make_train_val_test(
+        X_features,
+        y,
+        train_ratio,
+        val_ratio,
+        seed
+    )
+
+    # 4. Standardize using train stats only + add bias
+    std_splits, mean, std = standardize_and_add_bias(splits)
+
+    # 5. Fit OLS
+    theta = ols_fit(
+        std_splits["X_train"],
+        std_splits["y_train"]
+    )
+
+    # 6. Validation prediction
+    y_val_pred = ols_predict(
+        std_splits["X_val"],
+        theta
+    )
+
+    # 7. Test prediction
+    y_test_pred = ols_predict(
+        std_splits["X_test"],
+        theta
+    )
+
+    # 8. Metrics
+    val_metrics = evaluate_predictions(
+        std_splits["y_val"],
+        y_val_pred
+    )
+
+    test_metrics = evaluate_predictions(
+        std_splits["y_test"],
+        y_test_pred
+    )
+
+    return {
+        "theta": theta,
+        "y_test": std_splits["y_test"],
+        "y_test_pred": y_test_pred,
+        "test_metrics": test_metrics,
+        "val_metrics": val_metrics
+    }
 
