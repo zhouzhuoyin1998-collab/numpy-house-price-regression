@@ -71,8 +71,22 @@ def append_column(X, col):
 
     return np.column_stack((X, col))
 
-# Step 6 - one_hot_encode (not yet solved)
-# TODO: implement
+# Step 6 - one_hot_encode
+def one_hot_encode(labels):
+    # TODO: Convert a 1-D array of categorical labels into a dense binary one-hot matrix.
+    labels = np.array(labels)
+
+    classes = np.unique(labels)   # sorted unique values
+    n = len(labels)
+    c = len(classes)
+
+    result = np.zeros((n, c), dtype=float)
+
+    for i, label in enumerate(labels):
+        j = np.where(classes == label)[0][0]
+        result[i, j] = 1.0
+
+    return result
 
 # Step 7 - fit_standardizer (not yet solved)
 # TODO: implement
